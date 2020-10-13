@@ -15,20 +15,30 @@ spritesheets[3].src = 'spritesheets/spritesheet3.png'
 
 app.get('/image/:obj/:rot/out.png', (req, res) => {
     try {
+        
         let objID = req.params.obj;
-        let rot = parseInt(req.params.rot);
         let spriteInfo = sprites[objects[objID]];
+
+        let rot = parseInt(req.params.rot);
         let canvas = createCanvas(spriteInfo.width, spriteInfo.height);
         let ctx = canvas.getContext('2d');
 
 
         ctx.translate(spriteInfo.width/2, spriteInfo.height/2)
-        ctx.rotate(parseInt(rot) ? parseInt(rot) : 0)
+        ctx.rotate(rot* Math.PI / 180)
+        ctx.rotate(spriteInfo.rotation * Math.PI /180)
         
-        ctx.drawImage(spritesheets[spriteInfo.spritesheet], spriteInfo.x, spriteInfo.y, spriteInfo.width, spriteInfo.height, -spriteInfo.width/2, -spriteInfo.height/2, spriteInfo.width, spriteInfo.height)
+        
+        
+        if (spriteInfo.rotation != 0) {
+            ctx.drawImage(spritesheets[spriteInfo.spritesheet], spriteInfo.x, spriteInfo.y, spriteInfo.height, spriteInfo.width, -spriteInfo.height/2, -spriteInfo.width/2, spriteInfo.height, spriteInfo.width)    
+        } else {
+            ctx.drawImage(spritesheets[spriteInfo.spritesheet], spriteInfo.x, spriteInfo.y, spriteInfo.width, spriteInfo.height, -spriteInfo.width/2, -spriteInfo.height/2, spriteInfo.width, spriteInfo.height)
+        }
         
         return canvas.createPNGStream().pipe(res);
-    } catch {
+    } catch (er) {
+        console.log('Error: ' + er)
         return res.sendFile(__dirname + '\\e.jpg');
     }
     
