@@ -26,8 +26,8 @@ app.get('/image/:obj/:rot/out.png', (req, res) => {
         ctx.rotate(parseInt(rot) ? parseInt(rot) : 0)
         
         ctx.drawImage(spritesheets[spriteInfo.spritesheet], spriteInfo.x, spriteInfo.y, spriteInfo.width, spriteInfo.height, -spriteInfo.width/2, -spriteInfo.height/2, spriteInfo.width, spriteInfo.height)
-        res.writeHead(200, {'Content-Type': 'image/png' });
-        return res.end(canvas.toBuffer());
+        
+        return canvas.createPNGStream().pipe(res);
     } catch {
         return res.sendFile(__dirname + '\\e.jpg');
     }
